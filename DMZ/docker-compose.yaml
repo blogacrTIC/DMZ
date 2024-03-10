@@ -1,0 +1,76 @@
+version: '5'
+services:
+  fwe:
+    build: fwe
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    #ports:
+    #  - 127.0.0.1:500:500/udp
+    #  - 127.0.0.1:4500:4500/udp
+    #volumes:
+    #  - ./etc:/etc
+    #restart: always
+    tty: true
+    stdin_open: true
+    tmpfs: /run
+    entrypoint: ./entrypoint.sh
+    networks:
+      netdmz:
+        ipv4_address: 192.168.1.10
+      default:
+      
+  fwi:
+    build: fwi
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    #ports:
+    #  - 192.168.1.131:500:500/udp
+    #  - 192.168.1.131:4500:4500/udp
+    #volumes:
+    #  - ./etc:/etc
+    tty: true
+    tmpfs: /run
+    stdin_open: true
+    entrypoint: ./entrypoint.sh
+    networks:
+      netdmz:
+        ipv4_address: 192.168.1.20
+      netint:
+        ipv4_address: 10.0.0.10
+        
+  http:
+    build: http
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    #ports
+    #  - 192.168.1.131:500:500/udp
+    #  - 192.168.1.131:4500:4500/udp
+    volumes:
+      - ./http/www:/var/www
+    tty: true
+    tmpfs: /run
+    stdin_open: true
+    entrypoint: ./entrypoint.sh
+    networks:
+      netdmz:
+        ipv4_address: 192.168.1.100
+      
+
+
+networks:
+    netdmz:
+      ipam:
+        driver: default
+        config:
+          - subnet: 192.168.1.0/24
+    netint:
+      ipam:
+        driver: default
+        config:
+          - subnet: 10.0.0.0/24
+   
+
+#key SPSivRrwaZc=

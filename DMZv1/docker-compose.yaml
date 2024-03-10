@@ -1,0 +1,90 @@
+version: '5'
+services:
+  fwe:
+    build: fwe
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    hostname: fwe
+    tty: true
+    stdin_open: true
+    tmpfs: /run
+    entrypoint: ./entrypoint.sh
+    networks:
+      netdmz:
+        ipv4_address: 192.168.1.10
+      netext:
+        ipv4_address: 172.16.128.10
+  fwi:
+    build: fwi
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    hostname: fwi
+    tty: true
+    tmpfs: /run
+    stdin_open: true
+    entrypoint: ./entrypoint.sh
+    networks:
+      netdmz:
+        ipv4_address: 192.168.1.20
+      netint:
+        ipv4_address: 10.0.0.10       
+  srv:
+    build: srv
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    hostname: srv
+    volumes:
+      - ./srv/www:/var/www
+    tty: true
+    tmpfs: /run
+    stdin_open: true
+    entrypoint: ./entrypoint.sh
+    networks:
+      netdmz:
+        ipv4_address: 192.168.1.100
+  pc_ext:
+    build: pc
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    hostname: pc_ext
+    tty: true
+    stdin_open: true
+    entrypoint: ./entrypoint.sh
+    networks:
+      netext:
+        ipv4_address: 172.16.128.100  
+  pc_int:
+    build: pc
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    hostname: pc_int
+    tty: true
+    stdin_open: true
+    entrypoint: ./entrypoint.sh
+    networks:
+      netint:
+        ipv4_address: 10.0.0.100
+
+networks:
+    netdmz:
+      ipam:
+        driver: default
+        config:
+          - subnet: 192.168.1.0/24
+    netint:
+      ipam:
+        driver: default
+        config:
+          - subnet: 10.0.0.0/24
+    netext:
+      ipam:
+        driver: default
+        config:
+          - subnet: 172.16.128.0/24
+
+#key SPSivRrwaZc=
